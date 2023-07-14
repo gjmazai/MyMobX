@@ -1,6 +1,7 @@
 import { isObservable, isPrimitive } from "../utils";
 import { $$observable } from "../constants";
 import { ObservableValue } from "../observableValue";
+import { Atom } from "../atom";
 
 
 function arrayEnhancer( items ) {
@@ -11,7 +12,7 @@ function arrayEnhancer( items ) {
 }
 
 /** Класс представляет описание наблюдаемого массива. */
-export class ObservableArray {
+export class ObservableArray extends Atom {
   constructor( target ) {
     this._observers = new Set()
 
@@ -93,27 +94,5 @@ export class ObservableArray {
   getValues() {
     return this._values;
   }
-
-  /**
-  * Метод добавляет слушатель в массив слушателей. Добавляет наблюдаемое значение в зависимости реакции.
-  * @param reaction - слушатель.
-  */
-  observe( reaction ) {
-    this._observers.add( reaction );
-  }
-
-  /**
-  * Метод удаляет слушатель из массива слушателей. Удаляет наблюдаемое значение из зависимостей реакции.
-  * @param reaction - слушатель.
-  */
-  dispose( reaction ) {
-    this._observers.delete( reaction );
-  }
-
-  /**
-  * Метод уведомляет слушателей об изменениях.
-  */
-  _notify() {
-    this._observers.forEach(( reaction ) => reaction());
-  }
+  
 }

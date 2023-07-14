@@ -1,8 +1,9 @@
 import { globalState } from '../GlobalState';
 import { $$observable } from '../constants';
+import { isPrimitive, isPureObject, isObservable, isArray } from "../utils.js"
 import { observableArrayProxyFabric } from '../observableArray';
 import { observableObjectProxyFactory } from '../observableObject';
-import { isPrimitive, isPureObject, isObservable, isArray } from "../utils.js"
+import { Atom } from '../atom';
 
 
 function enhancer( value ) {
@@ -15,10 +16,8 @@ function enhancer( value ) {
 	return value;
 }
 
-/**
- * Клаcc представляющий собой наблюдаемое значение, при условии, что оно является примитивом.
- */
-export class ObservableValue {
+/** Клаcc представляющий собой наблюдаемое значение. */
+export class ObservableValue extends Atom {
 	constructor( value ) {
 		this._observers = new Set();
 		this._value = enhancer( value );
@@ -48,26 +47,4 @@ export class ObservableValue {
 		this._notify();
 	}
 
-	/**
-	 * Метод добавляет слушатель в массив слушателей. Добавляет наблюдаемое значение в зависимости реакции.
-	 * @param reaction - слушатель, для добавления в массив.
-	 */
-	observe( reaction ) {
-		this._observers.add( reaction );
-	}
-
-	/**
-	 * Метод удаляет слушатель из массива слушателей. Удаляет наблюдаемое значение из зависимостей реакции.
-	 * @param reaction - слушатель, для удаления из массива.
-	 */
-	dispose( reaction ) {
-		this._observers.delete( reaction );
-	}
-
-	/**
-	 * Метод уведомляет слушателей об изменениях.
-	 */
-	_notify() {
-		this._observers.forEach( reaction => reaction() );
-	}
 }
